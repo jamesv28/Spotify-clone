@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import { clerkMiddleware } from "@clerk/express";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from "./routes/admin.routes.js";
@@ -12,6 +13,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(clerkMiddleware());
 const PORT = process.env.PORT;
 
 app.use("/api/users", userRoutes);
