@@ -18,6 +18,6 @@ export const requireAdmin = async (req, res, next) => {
       return;
     }
   } catch (error) {
-    console.log(`Error: ${error}`);
+    res.status(500).json({ message: `Unauthorized - ${error}` });
   }
 };
