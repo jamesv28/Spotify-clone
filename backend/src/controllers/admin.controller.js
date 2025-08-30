@@ -2,8 +2,8 @@ import { Song } from "../models/song.model.js";
 import { Album } from "../models/album.model.js";
 import cloudinary from "../lib/cloudinary.js";
 
-export const getAdmin = (req, res) => {
-  res.send("admin correctly sent with get request");
+export const checkAdmin = (req, res, next) => {
+  res.status(200).json({ admin: true });
 };
 
 const uploadToCloudinary = async (file) => {
@@ -66,6 +66,37 @@ export const deleteSong = async (req, res, next) => {
       res.status(200).json({ message: "Song deleted successfully" });
     }
   } catch (error) {
+    next(error);
+  }
+};
+
+export const createAlbums = async (req, res, next) => {
+  try {
+    const { title, artist, releaseYear } = req.body;
+    const { imageFile } = req.files;
+    const imageUrl = await uploadToCloudinary(imageFile);
+    const album = new Album({
+      title,
+      artist,
+      imageUrl,
+      releaseYear,
+    });
+    await album.save();
+    res.status(200).json({ message: "album saved successfully" });
+  } catch (error) {
+    console.log(error.message);
+    next(error);
+  }
+};
+
+export const deleteAlbums = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Song.deleteMangy({ albumId: id });
+    await Album.findByIdAndDelete(id);
+    res.status(200).json({ message: "album successfully deleted" });
+  } catch (error) {
+    console.log(`Error deleting album: ${error.message}`);
     next(error);
   }
 };
