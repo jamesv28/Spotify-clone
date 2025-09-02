@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import fileupload from "express-fileupload";
 import path from "path";
+import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
@@ -36,16 +37,20 @@ app.use("/api/songs", songRoutes);
 app.use("/api/albums", albumRoutes);
 app.use("/api/statistics", statisticRoutes);
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use((err, req, res, next) => {
   console.log(err.message);
-  res
-    .status(500)
-    .json({
-      message:
-        process.env.NODE_ENV == "production"
-          ? "Internal Server Error"
-          : err.message,
-    });
+  res.status(500).json({
+    message:
+      process.env.NODE_ENV == "production"
+        ? "Internal Server Error"
+        : err.message,
+  });
 });
 
 app.listen(PORT, () => {
